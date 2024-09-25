@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPI Time Series Charts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-4">
+    <div class="container mx-auto">
+        <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">KPI Time Series Charts - {{ filename }}</h1>
+        <div id="chartsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
+    </div>
+
+    <script>
+		const urlParams = new URLSearchParams(window.location.search);
+        const filename = urlParams.get('filename');
+		console.log("fname:", filename);
+        const API_URL = 'http://localhost:8000/api/timeseries/{{ filename }}';
+		let param = "{{ filename }}";
+        console.log("URL parameter:", param);
+		console.log(API_URL);
+        const modulationMap = {
+            'PI/2 BPSK': 1,
+            'QPSK': 2,
+            '16QAM': 3,
+            '64QAM': 4,
+            '256QAM': 5,
+            '1024QAM': 6
+        };
+
+        async function fetchData() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                throw error;
+            }
+        }
+
+        function createCharts(data) {
+            const chartsContainer = document.getElementById('chartsContainer');
+            const charts = [];
+
+            if (!data.time_range || !data.time_range.start || !data.time_range.end) {
+                console.error('Invalid time range data');
+                return;
+            }
+
+            const startTime = new Date(`2000-01-01T${data.time_range.start}`);
+            const endTime = new Date(`2000-01-01T${data.time_range.end}`);
+            const timeRange = endTime - startTime;
+
+            data.data.forEach((series, index) => {
+                const chartOuterDiv = document.createElement('div');
+                chartOuterDiv.className = 'bg-white rounded-lg shadow-lg p-4';
+                
+                const chartDiv = document.createElement('div');
+                chartDiv.id = `chartContainer${index}`;
+                chartDiv.className = 'chart-container';
+                chartOuterDiv.appendChild(chartDiv);
+                
+                chartsContainer.appendChild(chartOuterDiv);
+
+                const isModulation = series.name.includes('Modulation');
+
+                let dataPoints = series.x.map((x, i) => ({
+                    x: new Date(`2000-01-01T${x}`),
+                    y: isModulation ? modulationMap[series.y[i]] || 0 : parseFloat(series.y[i])
+                })).filter(point => !isNaN(point.y));
+
+                const chartOptions = {
+                    animationEnabled: false,
+                    zoomEnabled: true,
+                    panEnabled: true,
+                    theme: "light2",
+                    title: { 
+                        text: series.name,
+                        fontSize: 20,
+                        fontWeight: "bold",
+                        fontFamily: "system-ui"
+                    },
+                    axisX: {
+                        title: "Time",
+                        titleFontSize: 14,
+                        valueFormatString: "HH:mm:ss",
+                        labelAngle: -50,
+                        minimum: startTime,
+                        maximum: endTime
+                    },
+                    axisY: {
+                        title: isModulation ? "Modulation Type" : "Value",
+                        titleFontSize: 14,
+                        labelFormatter: isModulation ? function (e) {
+                            return Object.keys(modulationMap).find(key => modulationMap[key] === e.value) || "";
+                        } : null
+                    },
+                    data: [{
+                        type: "line",
+                        markerSize: 0,
+                        dataPoints: dataPoints
+                    }]
+                };
+
+                if (isModulation) {
+                    chartOptions.axisY.minimum = 0.5;
+                    chartOptions.axisY.maximum = 6.5;
+                    chartOptions.axisY.interval = 1;
+                }
+
+                const chart = new CanvasJS.Chart(chartDiv.id, chartOptions);
+                charts.push(chart);
+            });
+
+            // Synchronize charts
+            syncCharts(charts);
+
+            // Render all charts
+            charts.forEach(chart => chart.render());
+        }
+
+        function syncCharts(charts) {
+            charts.forEach(chart => {
+                chart.options.rangeChanged = function (e) {
+                    syncHandler(e, charts);
+                };
+            });
+        }
+
+        function syncHandler(e, charts) {
+            for (let i = 0; i < charts.length; i++) {
+                if (charts[i] !== e.chart) {
+                    charts[i].options.axisX.viewportMinimum = e.axisX[0].viewportMinimum;
+                    charts[i].options.axisX.viewportMaximum = e.axisX[0].viewportMaximum;
+                }
+            }
+            charts.forEach(chart => {
+                if (chart !== e.chart) {
+                    chart.render();
+                }
+            });
+        }
+
+        async function init() {
+            try {
+                const data = await fetchData();
+                if (data && data.data && data.data.length > 0) {
+                    createCharts(data);
+                } else {
+                    console.log('No data available to display.');
+                }
+            } catch (error) {
+                console.error('Error initializing charts:', error);
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>

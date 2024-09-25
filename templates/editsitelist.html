@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Site List - Cellular Data Processing</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Site List</h1>
+        
+        <nav>
+            <button onclick="location.href='/'">Home</button>
+            <button onclick="location.href='/edit_sitelist'">Site List</button>
+            <button onclick="location.href='/edit_criteria'">Criteria</button>
+        </nav>
+
+        <section id="siteUpload">
+            <h2>Upload Site Data</h2>
+            <div id="siteDropzone" class="dropzone">
+                Drag and drop site CSV file here or click to select
+            </div>
+            <form id="siteForm">
+                <input type="file" id="siteFile" name="file" accept=".csv" style="display: none;">
+                <button type="submit">Upload Sites</button>
+            </form>
+            <div id="siteStatus" class="status"></div>
+        </section>
+
+        <section id="siteList">
+            <h2>Site List</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Site ID/Sector ID</th>
+                        <th>Market</th>
+                        <th>Site Name</th>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
+                        <th>Criteria</th>
+                        <th>Criteria Value</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="sitesTableBody"></tbody>
+            </table>
+        </section>
+    </div>
+
+    <div id="editSiteModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditSiteModal()">&times;</span>
+            <h2>Edit Site</h2>
+            <form id="editSiteForm">
+                <input type="hidden" id="editSiteId">
+                <label for="editMarket">Market:</label>
+                <input type="text" id="editMarket" required>
+                <label for="editSiteName">Site Name:</label>
+                <input type="text" id="editSiteName" required>
+                <label for="editLatitude">Latitude:</label>
+                <input type="number" id="editLatitude" step="any" required>
+                <label for="editLongitude">Longitude:</label>
+                <input type="number" id="editLongitude" step="any" required>
+                <label for="editCriteria">Criteria:</label>
+                <input type="text" id="editCriteria" required>
+                <label for="editCriteriaValue">Criteria Value:</label>
+                <input type="text" id="editCriteriaValue" required>
+                <button type="submit">Update Site</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

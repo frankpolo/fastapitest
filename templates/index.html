@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cellular Data Processing</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Cellular Data Processing</h1>
+        
+        <nav>
+            <button onclick="location.href='/'">Home</button>
+            <button onclick="location.href='/edit_sitelist'">Site List</button>
+            <button onclick="location.href='/edit_criteria'">Criteria</button>
+        </nav>
+
+        <section id="dataUpload">
+            <h2>Upload and Process Data</h2>
+            <div id="zipDropzone" class="dropzone">
+                Drag and drop ZIP files here or click to select
+            </div>
+            <form id="zipForm">
+                <input type="file" id="zipFile" name="files" multiple accept=".zip" style="display: none;">
+                <button type="submit">Process ZIP Files</button>
+            </form>
+            <div id="zipStatus" class="status"></div>
+        </section>
+
+        <section id="testResults">
+            <h2>Test Results</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Filename</th>
+                        <th>Timestamp</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="testResultsTableBody"></tbody>
+            </table>
+        </section>
+
+        <section id="results">
+            <h2>Processing Results</h2>
+            <div id="processingResults"></div>
+        </section>
+    </div>
+
+    <div id="testResultModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeTestResultModal()">&times;</span>
+            <div id="testResultDetails"></div>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

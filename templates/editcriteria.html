@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Criteria - Cellular Data Processing</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Criteria</h1>
+        
+        <nav>
+            <button onclick="location.href='/'">Home</button>
+            <button onclick="location.href='/edit_sitelist'">Site List</button>
+            <button onclick="location.href='/edit_criteria'">Criteria</button>
+        </nav>
+
+        <section id="criteriaUpload">
+            <h2>Upload Criteria Data</h2>
+            <div id="criteriaDropzone" class="dropzone">
+                Drag and drop criteria CSV file here or click to select
+            </div>
+            <form id="criteriaForm">
+                <input type="file" id="criteriaFile" name="file" accept=".csv" style="display: none;">
+                <button type="submit">Upload Criteria</button>
+            </form>
+            <div id="criteriaStatus" class="status"></div>
+        </section>
+
+        <section id="criteriaList">
+            <h2>Criteria List</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Value</th>
+                        <th>KPI Name</th>
+                        <th>Pass Condition</th>
+                        <th>Pass Value</th>
+                        <th>Conditional Pass Condition</th>
+                        <th>Conditional Pass Value</th>
+                        <th>Unit</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="criteriaTableBody"></tbody>
+            </table>
+        </section>
+    </div>
+
+    <div id="editCriteriaModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditCriteriaModal()">&times;</span>
+            <h2>Edit Criteria</h2>
+            <form id="editCriteriaForm">
+                <input type="hidden" id="editCriteriaId">
+                <label for="editType">Type:</label>
+                <input type="text" id="editType" required>
+                <label for="editValue">Value:</label>
+                <input type="text" id="editValue" required>
+                <label for="editKpiName">KPI Name:</label>
+                <input type="text" id="editKpiName" required>
+                <label for="editPassCondition">Pass Condition:</label>
+                <input type="text" id="editPassCondition" required>
+                <label for="editPassValue">Pass Value:</label>
+                <input type="number" id="editPassValue" step="any" required>
+                <label for="editConditionalPassCondition">Conditional Pass Condition:</label>
+                <input type="text" id="editConditionalPassCondition" required>
+                <label for="editConditionalPassValue">Conditional Pass Value:</label>
+                <input type="number" id="editConditionalPassValue" step="any" required>
+                <label for="editUnit">Unit:</label>
+                <input type="text" id="editUnit" required>
+                <button type="submit">Update Criteria</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
