@@ -747,9 +747,11 @@ async def custom_swagger_ui_html():
 async def get_open_api_endpoint():
     return JSONResponse(get_openapi(title="Cellular Data Processing API", version="1.0.0", routes=app.routes))
 
+'''
 if __name__ == "__main__":
     import uvicorn
     logger.info("Starting FastAPI application...")
     logger.info(f"Templates directory: {templates_dir}")
     logger.info(f"Static files directory: {static_dir}")
     uvicorn.run(app, host="0.0.0.0", port=8000)
+'''
